@@ -1,7 +1,7 @@
 import Message from "../models/message.model.js";
 import User from '../models/user.model.js';
 import cloudinary from '../../config/cloudinary.js';
-import { getReceiverSocketID } from "../../utils/sokat.js";
+import { getReceiverSocketID, io } from "../../utils/sokat.js";
 
 export const getUserForUser = async (req, res) => {
   const { id } = req.params;
@@ -81,7 +81,7 @@ export const sendMessage = async (req, res) => {
 
         const receiverSocketID = getReceiverSocketID(user);
         if(receiverSocketID) {
-            req.io.to(receiverSocketID).emit("sendMessage", sendMessage);
+            io.to(receiverSocketID).emit("sendMessage", sendMessage);
         }
 
         res.status(200).json({

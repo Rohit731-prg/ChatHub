@@ -44,8 +44,13 @@ export const useChatStore = create((set, get) => ({
 
   // Send a new message
   sendMessage: async (userID, messageData) => {
+    console.log(get().selectedUser);
     try {
-      const res = await axios.post(`http://localhost:2000/api/message/sendMessage/${userID}`, messageData);
+      const res = await axios.post(`http://localhost:2000/api/message/sendMessage/${userID}`, {
+        user: get().selectedUser._id,
+        message: messageData.message,
+        image: messageData.image,
+      });
       set((state) => ({
         messages: [...state.messages, res.data.message],
       }));
@@ -54,25 +59,23 @@ export const useChatStore = create((set, get) => ({
     }
   },
 
-  // Subscribe to real-time incoming messages
   subscribeToMessages: () => {
     const { selectedUser } = get();
     if (!selectedUser) return;
 
     const socket = useAuthStore.getState().socket;
-    if (!socket) return;
-
+    console.log(socket);
     socket.on("newMessage", (newMessage) => {
-      const isFromSelectedUser = newMessage.senderId === selectedUser._id;
-      if (!isFromSelectedUser) return;
+      console.log(newMessage);
+      const isMessageSentFromSelectedUser = newMessage.senderId === selectedUser._id;
+      if (!isMessageSentFromSelectedUser) return;
 
-      set((state) => ({
-        messages: [...state.messages, newMessage],
-      }));
+      set({
+        messages: [...get().messages, newMessage],
+      });
     });
   },
 
-  // Unsubscribe from socket
   unsubscribeFromMessages: () => {
     const socket = useAuthStore.getState().socket;
     if (socket) {
@@ -81,5 +84,9 @@ export const useChatStore = create((set, get) => ({
   },
 
   // Set the currently selected user
-  setSelectedUser: (selectedUser) => set({ selectedUser }),
+  setSelectedUser: (user) => {
+    console.log(user);
+    set({ selectedUser: user });
+    console.log(get().selectedUser);
+  },
 }));

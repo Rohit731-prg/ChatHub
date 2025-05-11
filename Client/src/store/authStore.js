@@ -27,10 +27,13 @@ const useAuthStore = create((set, get) => ({
     const { isUserLogin } = get();
     if (!isUserLogin) return;
 
-    console.log("socket connected");
+    console.log("socket connected, userID : ", get().authUser._id);
 
     const socket = io("http://localhost:2000", {
       withCredentials: true,
+      query: {
+        userID: get().authUser._id,
+      }
     });
     set({ socket });
   },

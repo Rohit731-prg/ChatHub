@@ -10,30 +10,35 @@ import useAuthStore from "../store/authStore";
 function Profile() {
   const authUser = useAuthStore((state) => state.authUser);
   const getUsers = useChatStore((state) => state.getUsers);
+  const selectedUser = useChatStore((state) => state.selectedUser);
   const users = useChatStore((state) => state.users) || [];
   const messages = useChatStore((state) => state.messages) || [];
+  const getMessages = useChatStore((state) => state.getMessages);
+  const subscribeToMessages = useChatStore((state) => state.subscribeToMessages);
+  const unsubscribeFromMessages = useChatStore((state) => state.unsubscribeFromMessages);
+  const setSelectedUser = useChatStore((state) => state.setSelectedUser);
   const [search, setSearch] = useState("");
   const [message, setMessage] = useState({
-    user: '',
-    message: '',
-    image: ''
+    message: "",
+    image: "",
   });
-  const [selectedUser, setSelectedUser] = useState(null);
+  const getMessagesByUser = async (user) => {
+    setSelectedUser(user);
+    getMessages(authUser._id, user._id);
+    console.log("calling subscribe to messages");
+    subscribeToMessages();
 
-  const getMessagesByUser = async (receiverID) => {
-    const userID = authUser._id;
-    setSelectedUser(receiverID);
-    setMessage({ ...message, user: receiverID._id });
-    useChatStore.getState().getMessages(userID, receiverID._id);
+    return () => unsubscribeFromMessages();
   };
 
   const sendMessage = async () => {
     const userID = authUser._id;
     useChatStore.getState().sendMessage(userID, message);
+    setMessage({ ...message, message: "" });
+    getMessages(userID, selectedUser._id);
   };
 
   useEffect(() => {
-    console.log(users);
     const userID = authUser._id;
     getUsers(userID);
   }, []);
@@ -78,29 +83,55 @@ function Profile() {
       </div>
 
       {messages.length > 0 ? (
-        <div className="w-3/4 bg-gray-800 rounded-md p-4">
-          <nav className="flex items-start gap-3 mb-5">
-            {selectedUser && selectedUser.profilePic && (
-              <img src={selectedUser.profilePic} className="w-10 h-10" />
+        <div className="w-3/4 bg-gray-900 rounded-md p-4 flex flex-col h-full">
+          {/* Top Bar */}
+          <nav className="flex items-center gap-3 mb-4 border-b border-gray-700 pb-3">
+            {selectedUser?.profilePic && (
+              <img
+                src={selectedUser.profilePic}
+                className="w-10 h-10 rounded-full object-cover"
+                alt="User"
+              />
             )}
-            <p>{selectedUser ? selectedUser.name : "Select a user"}</p>
+            <p className="text-white font-semibold text-lg">
+              {selectedUser ? selectedUser.name : "Select a user"}
+            </p>
           </nav>
 
-          <div>
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto space-y-2 pr-2">
             {messages.map((msg, index) => (
-              <p key={index}>{msg.message}</p>
+              <div
+                key={index}
+                className={`max-w-xs md:max-w-sm break-words px-4 py-2 rounded-lg text-sm ${
+                  msg.sender === authUser._id
+                    ? "ml-auto bg-green-500 text-white rounded-br-none"
+                    : "mr-auto bg-gray-700 text-white rounded-bl-none"
+                }`}
+              >
+                {msg.message}
+              </div>
             ))}
           </div>
 
-          <div>
-            <input type="file" />
+          {/* Message Input */}
+          <div className="mt-4 flex items-center gap-2">
+            <input type="file" className="text-white" />
             <input
               type="text"
               value={message.message}
               placeholder="Type a message"
-              onChange={(e) => setMessage({ ...message, message: e.target.value })}
+              onChange={(e) =>
+                setMessage({ ...message, message: e.target.value })
+              }
+              className="flex-1 bg-gray-800 border border-gray-600 text-white px-4 py-2 rounded-md focus:outline-none focus:ring-1 focus:ring-green-400"
             />
-            <button onClick={sendMessage}>Send</button>
+            <button
+              onClick={sendMessage}
+              className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md"
+            >
+              Send
+            </button>
           </div>
         </div>
       ) : (
