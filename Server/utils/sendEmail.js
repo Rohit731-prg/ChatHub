@@ -18,7 +18,8 @@ export const sendEmail = async (to, subject, text) => {
       to,
       subject,
       text,
-      html: `<p>${text}</p>`,
+      html: `<h1>This is form ChatHub</h1>
+      <p>${text}</p>`,
     };
 
     const info = await transporter.sendMail(mailOptions);

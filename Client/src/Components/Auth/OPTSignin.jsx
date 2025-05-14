@@ -14,7 +14,7 @@ function OPTSignin() {
             console.log(res);
             toast.success(res.data.message);
             setTimeout(() => {
-                navigate(`/profile/${id}`);
+                navigate(`/login`);
             }, 1000);
         } catch (error) {
             toast.error(error.response.data.message);

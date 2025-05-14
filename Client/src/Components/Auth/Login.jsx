@@ -3,12 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { MdEmail } from "react-icons/md";
 import { FaUnlock } from "react-icons/fa";
 import { Toaster } from 'react-hot-toast';
-import useAuthStore from "../../store/authStore";
+import useAuthStore from '../../store/authStore'
 
 function Login() {
   const navigate = useNavigate();
-  const isUserLogin = useAuthStore((state) => state.isUserLogin);
-  const authUser = useAuthStore((state) => state.authUser);
   const setUserDetails = useAuthStore((state) => state.setUserDetails);
 
 
@@ -21,6 +19,7 @@ function Login() {
     e.preventDefault();
 
     await setUserDetails(userData);
+    const { isUserLogin: isUserLogin, authUser: authUser } = useAuthStore.getState();
     if(isUserLogin) {
       navigate(`/profile/${authUser._id}`);
     }

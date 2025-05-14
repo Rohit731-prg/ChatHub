@@ -7,6 +7,9 @@ const useAuthStore = create((set, get) => ({
   authUser: null,
   isUserLogin: false,
   socket: null,
+  isActive: null,
+
+  setIsActive: (id) => set({ isActive: id }),
 
   setUserDetails: async (data) => {
     try {

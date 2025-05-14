@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Sideber from "./ProfilePage/Sideber";
+import Sideber from "./ProfilePage/Sidebar";
 import { Toaster } from "react-hot-toast";
 import { IoChatbubbles } from "react-icons/io5";
 import { CiLock } from "react-icons/ci";
@@ -18,6 +18,7 @@ function Profile() {
   const unsubscribeFromMessages = useChatStore((state) => state.unsubscribeFromMessages);
   const setSelectedUser = useChatStore((state) => state.setSelectedUser);
   const [search, setSearch] = useState("");
+  const [isMessagesShow, setIsMessagesShow] = useState(false);
   const [message, setMessage] = useState({
     message: "",
     image: "",
@@ -27,6 +28,7 @@ function Profile() {
     getMessages(authUser._id, user._id);
     console.log("calling subscribe to messages");
     subscribeToMessages();
+    setIsMessagesShow(true);
 
     return () => unsubscribeFromMessages();
   };
@@ -82,7 +84,7 @@ function Profile() {
         )}
       </div>
 
-      {messages.length > 0 ? (
+      {isMessagesShow ? (
         <div className="w-3/4 bg-gray-900 rounded-md p-4 flex flex-col h-full">
           {/* Top Bar */}
           <nav className="flex items-center gap-3 mb-4 border-b border-gray-700 pb-3">

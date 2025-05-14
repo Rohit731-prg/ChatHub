@@ -72,22 +72,23 @@ export const sendMessage = async (req, res) => {
             const uploadResponse = await cloudinary.uploader.upload(image);
             imageURL = uploadResponse.secure_url;
         }
-        const sendMessage = await Message.create({
+        const newMessage = new Message({
             sender: id,
             receiver: user,
             message: message,
             image: imageURL
         })
+        await newMessage.save();
 
         const receiverSocketID = getReceiverSocketID(user);
         if(receiverSocketID) {
-            io.to(receiverSocketID).emit("sendMessage", sendMessage);
+            io.to(receiverSocketID).emit("newMessage", newMessage);
         }
 
         res.status(200).json({
             success: true,
             message: "Message sent successfully",
-            sendMessage: sendMessage
+            sendMessage: newMessage
         })
     } catch (error) {
         res.status(500).json({

@@ -16,7 +16,7 @@ function Signin() {
             const res = await axios.post('http://localhost:2000/api/user/signup', userData);
             console.log(res);
             toast.success(res.data.message);
-            navigate('/login');
+            navigate(`/optSignin/${res.data.userDetails._id}`);
         } catch (error) {
             toast.error(error.response.data.message);
             console.log('error form signup', error);
