@@ -6,6 +6,7 @@ import { CiLock } from "react-icons/ci";
 import { IoSearchSharp } from "react-icons/io5";
 import { useChatStore } from "../store/chatStore";
 import useAuthStore from "../store/authStore";
+import { ImAttachment } from "react-icons/im";
 
 function Profile() {
   const authUser = useAuthStore((state) => state.authUser);
@@ -14,8 +15,12 @@ function Profile() {
   const users = useChatStore((state) => state.users) || [];
   const messages = useChatStore((state) => state.messages) || [];
   const getMessages = useChatStore((state) => state.getMessages);
-  const subscribeToMessages = useChatStore((state) => state.subscribeToMessages);
-  const unsubscribeFromMessages = useChatStore((state) => state.unsubscribeFromMessages);
+  const subscribeToMessages = useChatStore(
+    (state) => state.subscribeToMessages
+  );
+  const unsubscribeFromMessages = useChatStore(
+    (state) => state.unsubscribeFromMessages
+  );
   const setSelectedUser = useChatStore((state) => state.setSelectedUser);
   const [search, setSearch] = useState("");
   const [isMessagesShow, setIsMessagesShow] = useState(false);
@@ -36,7 +41,8 @@ function Profile() {
   const sendMessage = async () => {
     const userID = authUser._id;
     useChatStore.getState().sendMessage(userID, message);
-    setMessage({ ...message, message: "" });
+    setMessage({ message: "", image: "" });
+    console.log(message);
     getMessages(userID, selectedUser._id);
   };
 
@@ -44,6 +50,18 @@ function Profile() {
     const userID = authUser._id;
     getUsers(userID);
   }, []);
+
+  const convertImage = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+
+    reader.onload = async () => {
+      const base64Image = reader.result;
+      console.log(base64Image);
+      setMessage({ ...message, image: base64Image });
+    };
+  };
 
   return (
     <div className="w-full h-screen bg-black flex flex-row text-white p-5">
@@ -73,7 +91,7 @@ function Profile() {
                 <img
                   src={user.profilePic}
                   alt={user.name}
-                  className="w-10 h-10 rounded-full"
+                  className="w-10 h-10 rounded-full object-cover"
                 />
                 <p className="text-white">{user.name}</p>
               </div>
@@ -111,6 +129,7 @@ function Profile() {
                     : "mr-auto bg-gray-700 text-white rounded-bl-none"
                 }`}
               >
+                {msg.image && <img src={msg.image} alt="Message" />}
                 {msg.message}
               </div>
             ))}
@@ -118,7 +137,20 @@ function Profile() {
 
           {/* Message Input */}
           <div className="mt-4 flex items-center gap-2">
-            <input type="file" className="text-white" />
+            <label
+              htmlFor="fileInput"
+              className="bg-black text-white p-3 rounded-full cursor-pointer"
+            >
+              <ImAttachment className="text-2xl" />
+            </label>
+
+            <input
+              id="fileInput"
+              type="file"
+              accept="image/*"
+              onChange={(e) => convertImage(e)}
+              className="hidden"
+            />
             <input
               type="text"
               value={message.message}

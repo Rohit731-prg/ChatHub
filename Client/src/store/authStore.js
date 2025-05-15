@@ -65,7 +65,7 @@ const useAuthStore = create((set, get) => ({
 
   setUploadProfilePic: async (data) => {
     try {
-      const res = await axios.post("http://localhost:2000/api/user/uploadImage", data);
+      const res = await axios.put("http://localhost:2000/api/user/uploadImage", data);
       toast.success(res.data.message);
       set({
         authUser: {
