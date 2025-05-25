@@ -1,66 +1,80 @@
 import axios from "axios";
 import React, { useState } from "react";
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 function Signin() {
-    const navigate = useNavigate();
-    const [userData, serUserData] = useState({
-        name: "",
-        email: "",
-        password: "",
-    });
+  const navigate = useNavigate();
+  const [userData, serUserData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
 
-    const submitUser = async () => {
-        try {
-            const res = await axios.post('http://localhost:2000/api/user/signup', userData);
-            console.log(res);
-            toast.success(res.data.message);
-            navigate(`/optSignin/${res.data.userDetails._id}`);
-        } catch (error) {
-            toast.error(error.response.data.message);
-            console.log('error form signup', error);
-        }
+  const submitUser = async () => {
+    try {
+      const res = await axios.post(
+        "http://localhost:2000/api/user/signup",
+        userData
+      );
+      console.log(res);
+      toast.success(res.data.message);
+      navigate(`/optSignin/${res.data.userDetails._id}`);
+    } catch (error) {
+      toast.error(error.response.data.message);
+      console.log("error from signup", error);
     }
+  };
+
   return (
-    <div className="w-full h-screen bg-black flex items-center justify-center">
-      <div 
-      style={{boxShadow: '0 0 10px white'}}
-      className="px-10 py-5 rounded-md flex flex-col items-center justify-center bg-gray-600 w-96">
-        <img
-          src="https://bcassetcdn.com/public/blog/wp-content/uploads/2022/05/06230258/angry-gorilla-logo-for-sale-by-unom-design-dribbble.png"
-          alt=""
-          className="w-20 h-20 mb-20 object-cover rounded-full"
-        />
+    <div className="w-full h-screen bg-gradient-to-br from-gray-900 to-black flex items-center justify-center px-4">
+      <div className="w-full max-w-md bg-gray-800 text-white rounded-xl shadow-lg p-8">
+        <div className="flex flex-col items-center">
+          <img
+            src="https://bcassetcdn.com/public/blog/wp-content/uploads/2022/05/06230258/angry-gorilla-logo-for-sale-by-unom-design-dribbble.png"
+            alt="Logo"
+            className="w-20 h-20 rounded-full object-cover mb-6 shadow-md"
+          />
+          <h2 className="text-3xl font-bold mb-8">Sign Up</h2>
+        </div>
 
-        <p className="text-5xl font-semibold">Sign In</p>
-
-        <div className="px-2 py-2 flex flex-row items-center justify-center bg-black gap-5 rounded-md w-full mt-10">
-            <input type="text" 
-            className="bg-black w-full border-none outline-none text-white"
+        <div className="space-y-5">
+          <input
+            type="text"
             placeholder="Full Name"
             value={userData.name}
-            onChange={(e) => serUserData({...userData, name: e.target.value})} />
-        </div>
-        <div className="px-2 py-2 flex flex-row items-center justify-center text-white bg-black gap-5 rounded-md w-full mt-5 ">
-            <input type="email" 
+            onChange={(e) =>
+              serUserData({ ...userData, name: e.target.value })
+            }
+            className="w-full px-4 py-3 rounded-md bg-gray-900 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
+          />
+          <input
+            type="email"
             placeholder="Email Address"
-            className="bg-black w-full border-none outline-none"
             value={userData.email}
-            onChange={(e) => serUserData({...userData, email: e.target.value})} />
-        </div>
-        <div className="px-2 py-2 flex flex-row items-center justify-center bg-black text-white gap-5 rounded-md w-full mt-5 ">
-            <input type="password" 
-            className="bg-black w-full border-none outline-none"
+            onChange={(e) =>
+              serUserData({ ...userData, email: e.target.value })
+            }
+            className="w-full px-4 py-3 rounded-md bg-gray-900 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
+          />
+          <input
+            type="password"
             placeholder="Password"
             value={userData.password}
-            onChange={(e) => serUserData({...userData, password: e.target.value})} />
-        </div>
-        <div className="w-full">
-          <button className="px-2 py-2 mt-5 bg-black rounded-md text-white w-full" onClick={submitUser}>Sign up</button>
+            onChange={(e) =>
+              serUserData({ ...userData, password: e.target.value })
+            }
+            className="w-full px-4 py-3 rounded-md bg-gray-900 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
+          />
+          <button
+            onClick={submitUser}
+            className="w-full bg-indigo-600 hover:bg-indigo-700 transition-colors py-3 rounded-md text-white font-semibold"
+          >
+            Sign Up
+          </button>
         </div>
       </div>
-      <Toaster />
+      <Toaster position="top-center" />
     </div>
   );
 }
