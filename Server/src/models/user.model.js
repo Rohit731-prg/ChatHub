@@ -18,6 +18,10 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
+    bio: {
+        type: String,
+        default: ""
+    },
     isVerified: {
         type: Boolean,
         default: false
@@ -30,5 +34,4 @@ const userSchema = new Schema({
 });
 
 const User = mongoose.model("User", userSchema);
-
 export default User;

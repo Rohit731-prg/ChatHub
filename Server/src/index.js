@@ -4,15 +4,16 @@ import { connectDB } from "./config/connectDB.js";
 import cookieParser from "cookie-parser";
 import UserRouter from './src/routes/userRouters.js';
 import MessageRouter from './src/routes/messageRouter.js';
-import dotenv from "dotenv";
-import { io, app, server } from './utils/sokat.js';
-
-dotenv.config();
+import 'dotenv/config';
+import http from "http";
 
 const port = process.env.PORT || 5000;
 
+const app = express();
+const server = http.createServer(app);
+
 app.use(express.json({
-    limit: "10mb"
+    limit: "4mb"
 }));
 app.use(cors({
     origin: "http://localhost:5173",
