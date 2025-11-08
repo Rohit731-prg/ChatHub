@@ -1,5 +1,5 @@
-import User from "../models/user.model";
-import { comparePassword, generateHashedPassword } from "../utils/hashPassword";
+import User from "../models/user.model.js";
+import { comparePassword, generateHashedPassword } from "../utils/hashPassword.js";
 
 export const signup = async (req, res) => {
     const { name, email, password, bio } = req.body;
