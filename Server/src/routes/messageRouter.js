@@ -1,6 +1,6 @@
 import express from 'express'
 import { verifyToken } from '../middleware/verifyJsonToken';
-import { getMessagesByUser, getUserForSidebar, sendMessage } from '../controllers/messageControoler';
+import { getMessagesByUser, getUserForSidebar, sendMessage } from '../controllers/messageController';
 import { upload, uploadImage } from '../middleware/multer';
 
 
