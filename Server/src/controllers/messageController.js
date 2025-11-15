@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
 import { uploadImage } from "../utils/uploadImage.js";
+import { io, onlineUsers } from "../index.js";
 
 export const getUserForSidebar = async (req, res) => {
     try {
@@ -25,17 +26,27 @@ export const sendMessage = async (req, res) => {
 
     try {
         const sender_id = req.user._id;
-        const is_exist = await Message.findOne({ sender: sender_id, receiver: id });
-        if (is_exist) return res.status(400).json({ message: "No user fonnd" });
-        const imageUrl = "";
+        const is_exist = await User.findById(id);
+        if (!is_exist) return res.status(404).json({ message: "User not found." });
+        let imageUrl = "";
+        let newMessage = null;
         if (image) {
             const { url, image_id } = await uploadImage(image.buffer);
             req.imageUrl = url;
             req.imageId = image_id;
             imageUrl = url;
+            newMessage = new Message({ sender: sender_id, receiver: id, message, image: imageUrl });
         }
-        const newMessage = new Message({ sender: sender_id, receiver: id, message, image: imageUrl });
+
+        newMessage = new Message({ sender: sender_id, receiver: id, message });
         await newMessage.save();
+
+        // emit the new message to reverser's socket
+        const recevierSocketID = onlineUsers[id];
+        if (recevierSocketID) {
+            io.to(recevierSocketID).emit("newMessage", newMessage);
+        }
+
         return res.status(201).json({ message: "Message sent successfully." });
     } catch (error) {
         return res.status(500).json({ message: error.message });

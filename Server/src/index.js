@@ -5,6 +5,8 @@ import cookieParser from "cookie-parser";
 import 'dotenv/config';
 import http from "http";
 import { Server } from "socket.io";
+import UserRouter from './routes/userRouters.js'
+import MessageRouter from './routes/messageRouter.js'
 
 const port = process.env.PORT || 5000;
 
@@ -21,6 +23,7 @@ export const onlineUsers = {}; // { userId: socketId }
 
 // socket handler function
 io.on("connection", (socket) => {
+    console.log("socket details: ", socket);
     const userID = socket.handshake.query.userID;
     console.log("user connected", userID);
     if (userID) onlineUsers[userID] = socket.id;
@@ -44,6 +47,8 @@ app.use(cors({
 }));
 app.use(cookieParser());
 
+app.use("/api/user", UserRouter);
+app.use("/api/message", MessageRouter);
 
 connectDB().then(() => {
     server.listen(port, () => {

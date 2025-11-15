@@ -1,17 +1,15 @@
-import multer from 'multer';
+import cloudinary from "../config/cloudinary.js";
 
-const storage = multer.diskStorage();
-export const upload = multer({ storage });
+export const uploadToCloudinary = (fileBuffer, folder = "uploads") => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { resource_type: "image", folder },
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      }
+    );
 
-export const uploadImage = async (req, res, next) => {
-    try {
-        if (!req.file) return res.status(400).json({ message: "No file uploaded." });
-
-        const { url, image_id } = await uploadImage(req.file.buffer);
-        req.imageUrl = url;
-        req.imageId = image_id;
-        next();
-    } catch (error) {
-        return res.status(500).json({ message: error.message });
-    }
-}
+    stream.end(fileBuffer);
+  });
+};

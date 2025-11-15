@@ -10,8 +10,9 @@ export const signup = async (req, res) => {
         if (is_exist) return res.status(409).json({ message: "User with this email already exists." });
 
         const hashedPassword = await generateHashedPassword(password);
+        const otp = Math.floor(100000 + Math.random() * 900000);
         const newUser = new User({
-            name, email, password: hashedPassword, bio
+            name, email, password: hashedPassword, bio, isVerified: false, verificationCode: otp, profilePic: req.imageUrl
         });
         await newUser.save();
 
