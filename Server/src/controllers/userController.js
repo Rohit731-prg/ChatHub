@@ -12,7 +12,7 @@ export const signup = async (req, res) => {
         const hashedPassword = await generateHashedPassword(password);
         const otp = Math.floor(100000 + Math.random() * 900000);
         const newUser = new User({
-            name, email, password: hashedPassword, bio, isVerified: false, verificationCode: otp, profilePic: req.imageUrl
+            name, email, password: hashedPassword, bio, isVerified: false, verificationCode: otp, profilePic: req.fileUrl
         });
         await newUser.save();
 
@@ -57,7 +57,7 @@ export const updateImage = async (req, res) => {
             profilePic: req.imageUrl,
             imageId: req.imageId
         });
-        return res.status(200).json({ message: "Profile picture updated successfully.", imageUrl: req.imageUrl });
+        return res.status(200).json({ message: "Profile picture updated successfully.", imageUrl: req.fileUrl });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
