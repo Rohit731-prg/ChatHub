@@ -17,6 +17,7 @@ const messageSchema = new Schema({
     image: {
         type: String
     },
+    image_id: { type: String },
     seen: {
         type: Boolean,
         default: false

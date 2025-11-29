@@ -2,7 +2,7 @@ import JWT from "jsonwebtoken";
 import User from "../models/user.model.js";
 
 export const verifyToken = async (req, res, next) => {
-    const { token } = req.cookies;
+    const token = req.headers["authorization"];
     console.log('token', token);
     if (!token) return res.status(401).json({ message: "Access denied. No token provided." });
     try {

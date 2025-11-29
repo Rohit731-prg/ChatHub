@@ -1,6 +1,5 @@
 import User from "../models/user.model.js";
 import Message from "../models/message.model.js";
-import { uploadImage } from "../utils/uploadImage.js";
 import { io, onlineUsers } from "../index.js";
 
 export const getUserForSidebar = async (req, res) => {
@@ -21,21 +20,16 @@ export const getUserForSidebar = async (req, res) => {
 
 export const sendMessage = async (req, res) => {
     const { id } = req.params;
-    const { message, image } = req.body;
+    const { message } = req.body;
     if (!message) return res.status(400).json({ message: "Message is required." });
 
     try {
         const sender_id = req.user._id;
         const is_exist = await User.findById(id);
         if (!is_exist) return res.status(404).json({ message: "User not found." });
-        let imageUrl = "";
         let newMessage = null;
         if (image) {
-            const { url, image_id } = await uploadImage(image.buffer);
-            req.imageUrl = url;
-            req.imageId = image_id;
-            imageUrl = url;
-            newMessage = new Message({ sender: sender_id, receiver: id, message, image: imageUrl });
+            newMessage = new Message({ sender: sender_id, receiver: id, message, image: req.fileUrl, image_id: req.fileId });
         }
 
         newMessage = new Message({ sender: sender_id, receiver: id, message });
